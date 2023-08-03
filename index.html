@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sing as One</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../favicon.png">
+    <!-- Style Link -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="backgroundGradient"></div>
+    <div class="musicNotes"></div>
+
+    <div class="songInfo">
+      <p id="songNameAndArtist"></p>
+      <div class="songProgress"></div>
+    </div>
+    
+
+    <div class="container">
+        <div class="countdownContent">
+            <h1 class="titleText">Sing as One</h1>
+            <div class="countdown">
+                <p id="nextSingDate"></p>
+                <div id="countdownClock">
+                    <div>
+                      <span id="days"></span>
+                      <div class="smalltext">Days</div>
+                    </div>
+                    <div>
+                      <span id="hours"></span>
+                      <div class="smalltext">Hours</div>
+                    </div>
+                    <div>
+                      <span id="minutes"></span>
+                      <div class="smalltext">Minutes</div>
+                    </div>
+                    <div>
+                      <span id="seconds"></span>
+                      <div class="smalltext">Seconds</div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+
+        <div class="musicContent">
+          <button id="startSingingButton" onclick="playAudio()">Start Singing</button>
+          <div class="lyrics">
+            <h1 id="lyric1" class="lyricText"></h1>
+            <h1 id="lyric2" class="lyricText highlighted"></h1>
+            <h1 id="lyric3" class="lyricText"></h1>
+          </div>
+          
+        </div>
+    </div>
+   
+    <audio style="display: none" id="music"></audio>
+
+    <!-- Copyright -->
+    <p class="copyright">© 2023 Sing as One. All Rights Reserved.</p>
+
+    <!-- Script Link -->
+    <script src="script.js"></script>
+    
+</body>
+</html>

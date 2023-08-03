@@ -1,0 +1,50 @@
+<body>
+    <div class="audio"></div>
+    <br>
+    <div id="total"></div>
+    <br>
+    <button onclick="calculate()">Calculate</button>
+
+    
+    
+    <script>
+
+    var numSongs
+
+    fetch('./songList.json')
+        .then(res => res.json())
+        .then(data => {
+            var html = ""
+            numSongs = data.songList.length
+        for(let i = 0; i < data.songList.length; i++) {
+            const currSong = data.songList[i]
+            const srcString = `./music/${currSong.songFile}`
+            html += `<audio id='audio${i}' src='${srcString}'></audio><b>${currSong.title} : </b><p id='audio${i}Duration'></p>`
+            
+
+        }
+        document.querySelector('.audio').innerHTML = html
+        })
+        .catch(error => {
+        console.error('Error:', error)
+        })
+
+        
+
+        function calculate() {
+
+            var total = 0
+
+            for(let i = 0; i < numSongs; i++) {
+                var audio = document.getElementById(`audio${i}`)
+                document.getElementById(`audio${i}Duration`).innerHTML = audio.duration
+                total += audio.duration
+            }
+
+            document.getElementById('total').innerHTML = `<p><b>TOTAL: </b> ${total}</p>`
+ 
+        }
+        
+    </script>
+</body>
+

@@ -1,0 +1,40 @@
+{
+    "songList" : [
+        {
+            "title": "Celebration",
+            "artist": "Kool & The Gang",
+            "lyricsFile": "celebrateGoodTimes.json",
+            "songFile": "Celebration.wav",
+            "duration": 298.933696
+        },
+        {
+            "title": "Beautiful Sunday",
+            "artist": "Daniel Boone",
+            "lyricsFile": "beautifulSunday.json",
+            "songFile": "Beautiful_Sunday.wav",
+            "duration": 176.693333
+        },
+        {
+            "title": "Sweet Caroline",
+            "artist": "Neil Diamond",
+            "lyricsFile": "sweetCaroline.json",
+            "songFile": "Sweet_Caroline.wav",
+            "duration": 200.267302
+        },
+        {
+            "title": "Rockin' All Over the World",
+            "artist": "Status Quo",
+            "lyricsFile": "rockinAllOverTheWorld.json",
+            "songFile": "Rockin_All_Over_The_World.wav",
+            "duration": 215.813333
+        },
+        {
+            "title": "Walking on Sunshine",
+            "artist": "Katrina and the Waves",
+            "lyricsFile": "walkingOnSunshine.json",
+            "songFile": "Walking_On_Sunshine.wav",
+            "duration": 238.733333
+        }
+    ]
+    
+}
