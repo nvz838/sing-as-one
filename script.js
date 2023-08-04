@@ -86,8 +86,7 @@ function start() {
         hour12: true, 
         weekday: 'long', 
         day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
+        month: 'short', 
       };
     
       const formattedDate = dates[minIndex].toLocaleString('en-US', options);
@@ -148,7 +147,7 @@ function setDate(date) {
 function joinMusic() {
 
   document.querySelector('.backgroundGradient').style.background = "linear-gradient(0deg, #511360 0%, #7d2d91 100%)"
-  document.body.style.background = "#511360"
+  document.body.style.background = "#7d2d91"
   document.querySelector('.countdownContent').style.opacity = "0"
   document.querySelector('.musicContent').style.opacity = "1"
   document.querySelector('.songInfo').style.opacity = "0.8"
@@ -176,7 +175,6 @@ function playAudio() {
       for(let i = 0; i < durationChanges.length; i++) {
           if(i == durationChanges.length-1) {
             if(elapsedTime > (durationChanges[i] + data.songList[i].duration)) {
-              console.log('over')
               return
             } else {
               startSong(data.songList, i, durationChanges[i], durationChanges)
@@ -204,10 +202,10 @@ function startSong(songs, songIndex, endTime, durationChanges) {
             const audio = document.getElementById('music')
               audio.src = `./music/${songs[songIndex].songFile}`
               const isIos = navigator.maxTouchPoints > 0 && AudioContext != null
-              if(isIos) {
-                  ios()
+              if(!isIos) {
+                 audio.play()
               }
-              audio.play()
+              
               
               audio.currentTime = songs[songIndex].duration - (endTime - (new Date().getTime() - startDate.getTime())/1000)
               
@@ -304,126 +302,6 @@ function startSong(songs, songIndex, endTime, durationChanges) {
           .catch(error => {
             console.error('Error:', error)
         })
-}
-
-
-
-
-//////////// IOS Audio Fix
-
-
-const ios = () => {
-  const USER_ACTIVATION_EVENTS = [
-      'auxclick',
-      'click',
-      'contextmenu',
-      'dblclick',
-      'keydown',
-      'keyup',
-      'mousedown',
-      'mouseup',
-      'touchend'
-    ]
-
-  let htmlAudioState = 'blocked'
-  let webAudioState = 'blocked'
-
-  let audio
-  let context
-  let source
-
-  const sampleRate = (new AudioContext()).sampleRate
-  const silentAudioFile = createSilentAudioFile(sampleRate)
-
-  USER_ACTIVATION_EVENTS.forEach(eventName => {
-  window.addEventListener(
-      eventName, handleUserActivation, { capture: true, passive: true }
-  )
-  })
-
-  // Return a seven samples long 8 bit mono WAVE file
-  function createSilentAudioFile (sampleRate) {
-      const arrayBuffer = new ArrayBuffer(10)
-      const dataView = new DataView(arrayBuffer)
-
-      dataView.setUint32(0, sampleRate, true)
-      dataView.setUint32(4, sampleRate, true)
-      dataView.setUint16(8, 1, true)
-
-      const missingCharacters =
-      window.btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
-          .slice(0, 13)
-
-      return `data:audio/wav;base64,UklGRisAAABXQVZFZm10IBAAAAABAAEA${missingCharacters}AgAZGF0YQcAAACAgICAgICAAAA=`
-  }
-
-  function handleUserActivation (e) {
-      if (htmlAudioState === 'blocked') {
-      htmlAudioState = 'pending'
-      createHtmlAudio()
-      }
-      if (webAudioState === 'blocked') {
-      webAudioState = 'pending'
-      createWebAudio()
-      }
-  }
-
-  function createHtmlAudio () {
-      audio = document.createElement('audio')
-
-      audio.setAttribute('x-webkit-airplay', 'deny') // Disable the iOS control center media widget
-      audio.preload = 'auto'
-      audio.loop = true
-      audio.src = silentAudioFile
-      audio.load()
-
-      audio.play().then(
-      () => {
-          htmlAudioState = 'allowed'
-          maybeCleanup()
-      },
-      () => {
-          htmlAudioState = 'blocked'
-
-          audio.pause()
-          audio.removeAttribute('src')
-          audio.load()
-          audio = null
-      }
-      )
-  }
-
-  function createWebAudio () {
-      context = new AudioContext()
-
-      source = context.createBufferSource()
-      source.buffer = context.createBuffer(1, 1, 22050) // .045 msec of silence
-      source.connect(context.destination)
-      source.start()
-
-      if (context.state === 'running') {
-      webAudioState = 'allowed'
-      maybeCleanup()
-      } else {
-      webAudioState = 'blocked'
-
-      source.disconnect(context.destination)
-      source = null
-
-      context.close()
-      context = null
-      }
-  }
-
-  function maybeCleanup () {
-      if (htmlAudioState !== 'allowed' || webAudioState !== 'allowed') return
-
-      USER_ACTIVATION_EVENTS.forEach(eventName => {
-      window.removeEventListener(
-          eventName, handleUserActivation, { capture: true, passive: true }
-      )
-      })
-  }
 }
 
 
