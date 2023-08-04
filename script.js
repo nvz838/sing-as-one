@@ -148,6 +148,7 @@ function setDate(date) {
 function joinMusic() {
 
   document.querySelector('.backgroundGradient').style.background = "linear-gradient(0deg, #511360 0%, #7d2d91 100%)"
+  document.body.style.background = "#511360"
   document.querySelector('.countdownContent').style.opacity = "0"
   document.querySelector('.musicContent').style.opacity = "1"
   document.querySelector('.songInfo').style.opacity = "0.8"
@@ -202,7 +203,12 @@ function startSong(songs, songIndex, endTime, durationChanges) {
           .then(data => {
             const audio = document.getElementById('music')
               audio.src = `./music/${songs[songIndex].songFile}`
-              audio.play()
+              try {
+                audio.play()
+              } catch (e) {
+                console.log(e)
+              }
+              
               audio.currentTime = songs[songIndex].duration - (endTime - (new Date().getTime() - startDate.getTime())/1000)
               
   
@@ -258,6 +264,7 @@ function startSong(songs, songIndex, endTime, durationChanges) {
                     if(songIndex == songs.length - 1) {
                       console.log('last song')
                       document.querySelector('.backgroundGradient').style.background = "linear-gradient(0deg, rgb(53, 92, 47) 0%, rgb(99, 172, 88) 100%)"
+                      document.body.style.background = "rgb(53, 92, 47)"
                       document.querySelector('.countdownContent').style.opacity = "1"
                       document.querySelector('.musicContent').style.opacity = "0"
                       document.querySelector('.songInfo').style.opacity = "0"
