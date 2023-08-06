@@ -163,7 +163,6 @@ function playAudio() {
         const currSong = data.songList[i]
         durationChanges[i] = currSong.duration + runningTotal
         runningTotal += currSong.duration
-        urls[i] = './music/' + data.songList[i].songFile
       }
 
       var elapsedTime = (new Date().getTime() - startDate.getTime())/1000
