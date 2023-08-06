@@ -143,9 +143,6 @@ function setDate(date) {
     }, 1000)
 }
 
-var durationChanges = []
-var songs;
-
 function joinMusic() {
 
   document.querySelector('.backgroundGradient').style.background = "linear-gradient(0deg, #511360 0%, #7d2d91 100%)"
@@ -153,15 +150,15 @@ function joinMusic() {
   document.querySelector('.countdownContent').style.opacity = "0"
   document.querySelector('.musicContent').style.opacity = "1"
   document.querySelector('.songInfo').style.opacity = "0.8"
+}
 
+function playAudio() {
   document.getElementById('startSingingButton').style.display = 'none'
-
   fetch('./songList.json')
     .then(res => res.json())
     .then(data => {
-      songs = data.songList
+      var durationChanges = []
       var runningTotal = 0
-      var urls = []
       for(let i = 0; i < data.songList.length; i++) {
         const currSong = data.songList[i]
         durationChanges[i] = currSong.duration + runningTotal
@@ -169,35 +166,7 @@ function joinMusic() {
         urls[i] = './music/' + data.songList[i].songFile
       }
 
-      const fetchPromises = urls.map(url => fetch(url));
-
-      Promise.all(fetchPromises)
-        .then(responses => Promise.all(responses.map(response => response.text())))
-        .then((texts) => {
-          console.log(texts)
-          document.querySelector('.loader').style.display = 'none'
-          document.getElementById('startSingingButton').style.display = 'block'
-        })
-        .catch(error => {
-          console.error('Error loading files:', error);
-        });
-
-      
-
-
-      
-
-    })
-    .catch(error => {
-      console.error('Error:', error)
-    })
-
-
-}
-
-function playAudio() {
-  document.getElementById('startSingingButton').style.display = 'none'
-    var elapsedTime = (new Date().getTime() - startDate.getTime())/1000
+      var elapsedTime = (new Date().getTime() - startDate.getTime())/1000
 
       for(let i = 0; i < durationChanges.length; i++) {
           if(i == durationChanges.length-1) {
@@ -213,6 +182,12 @@ function playAudio() {
             return
           }
       }
+    })
+    .catch(error => {
+      console.error('Error:', error)
+    })
+
+    
 }
 
 function startSong(songs, songIndex, endTime, durationChanges) {
@@ -300,7 +275,9 @@ function startSong(songs, songIndex, endTime, durationChanges) {
                 if(audio.currentTime >= data.lyrics[activeLyric+1].time) {
                   activeLyric++
 
-                  audio.currentTime = songs[songIndex].duration - (endTime - (new Date().getTime() - startDate.getTime())/1000)
+                  if(audio.currentTime != songs[songIndex].duration - (endTime - (new Date().getTime() - startDate.getTime())/1000)) {
+                    audio.currentTime = songs[songIndex].duration - (endTime - (new Date().getTime() - startDate.getTime())/1000)
+                  }
     
     
                   if(data.lyrics[activeLyric-1] != undefined) {
