@@ -143,6 +143,8 @@ function setDate(date) {
     }, 1000)
 }
 
+var durationChanges = []
+var songs;
 
 function joinMusic() {
 
@@ -152,45 +154,65 @@ function joinMusic() {
   document.querySelector('.musicContent').style.opacity = "1"
   document.querySelector('.songInfo').style.opacity = "0.8"
 
-
-}
-
-function playAudio() {
   document.getElementById('startSingingButton').style.display = 'none'
+
   fetch('./songList.json')
     .then(res => res.json())
     .then(data => {
-      var durationChanges = []
+      songs = data.songList
       var runningTotal = 0
+      var urls = []
       for(let i = 0; i < data.songList.length; i++) {
         const currSong = data.songList[i]
         durationChanges[i] = currSong.duration + runningTotal
         runningTotal += currSong.duration
-        
+        urls[i] = './music/' + data.songList[i].songFile
       }
 
+      const fetchPromises = urls.map(url => fetch(url));
 
-      var elapsedTime = (new Date().getTime() - startDate.getTime())/1000
+      Promise.all(fetchPromises)
+        .then(responses => Promise.all(responses.map(response => response.text())))
+        .then((texts) => {
+          console.log(texts)
+          document.querySelector('.loader').style.display = 'none'
+          document.getElementById('startSingingButton').style.display = 'block'
+        })
+        .catch(error => {
+          console.error('Error loading files:', error);
+        });
 
-      for(let i = 0; i < durationChanges.length; i++) {
-          if(i == durationChanges.length-1) {
-            if(elapsedTime > (durationChanges[i] + data.songList[i].duration)) {
-              return
-            } else {
-              startSong(data.songList, i, durationChanges[i], durationChanges)
-              return
-            }
-          }
-          else if(elapsedTime < durationChanges[i]) {
-            startSong(data.songList, i, durationChanges[i], durationChanges)
-            return
-          }
-      }
+      
+
+
+      
 
     })
     .catch(error => {
       console.error('Error:', error)
     })
+
+
+}
+
+function playAudio() {
+  document.getElementById('startSingingButton').style.display = 'none'
+    var elapsedTime = (new Date().getTime() - startDate.getTime())/1000
+
+      for(let i = 0; i < durationChanges.length; i++) {
+          if(i == durationChanges.length-1) {
+            if(elapsedTime > (durationChanges[i] + songs[i].duration)) {
+              return
+            } else {
+              startSong(songs, i, durationChanges[i], durationChanges)
+              return
+            }
+          }
+          else if(elapsedTime < durationChanges[i]) {
+            startSong(songs, i, durationChanges[i], durationChanges)
+            return
+          }
+      }
 }
 
 function startSong(songs, songIndex, endTime, durationChanges) {
@@ -200,16 +222,16 @@ function startSong(songs, songIndex, endTime, durationChanges) {
           .then(res => res.json())
           .then(data => {
             const audio = document.getElementById('music')
+              audio.autoplay = true
+              audio.src = "data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";
+              audio.play()
+              audio.pause()
               audio.src = `./music/${songs[songIndex].songFile}`
-              const isIos = navigator.maxTouchPoints > 0 && AudioContext != null
-              if(!isIos) {
-                 audio.play()
-              }
-              
-              
               audio.currentTime = songs[songIndex].duration - (endTime - (new Date().getTime() - startDate.getTime())/1000)
+
+              audio.play()
               
-  
+              
               var activeLyric = 0
   
               for(let i = 0; i < data.lyrics.length; i++) {
