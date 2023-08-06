@@ -169,15 +169,15 @@ function playAudio() {
 
       for(let i = 0; i < durationChanges.length; i++) {
           if(i == durationChanges.length-1) {
-            if(elapsedTime > (durationChanges[i] + songs[i].duration)) {
+            if(elapsedTime > (durationChanges[i] + data.songList[i].duration)) {
               return
             } else {
-              startSong(songs, i, durationChanges[i], durationChanges)
+              startSong(data.songList, i, durationChanges[i], durationChanges)
               return
             }
           }
           else if(elapsedTime < durationChanges[i]) {
-            startSong(songs, i, durationChanges[i], durationChanges)
+            startSong(data.songList, i, durationChanges[i], durationChanges)
             return
           }
       }
